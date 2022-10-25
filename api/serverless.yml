@@ -1,0 +1,53 @@
+service: serverless-email-otp-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  environment:
+    DYNAMODB_TABLE: ${self:service}-userTable-${sls:stage}
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Action:
+            - 'dynamodb:PutItem'
+            - 'dynamodb:Get*'
+            - 'dynamodb:Scan*'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:DeleteItem'
+          Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:service}-userTable-${sls:stage}
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+  sendEmail:
+    handler: functions/auth.sendEmail
+    events:
+      - httpApi:
+          path: /auth/login
+          method: post
+  validateCode:
+    handler: functions/auth.validateCode
+    events:
+      - httpApi:
+          path: /auth/login/challenge
+          method: post
+
+resources:
+  Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
+        TableName: ${self:service}-userTable-${sls:stage}
