@@ -45,10 +45,10 @@ package:
 
 functions:
   hello:
-    handler: handler.hello
+    handler: functions/protected.hello
     events:
       - httpApi:
-          path: /
+          path: /protected
           method: get
           authorizer: 
             name: lambdaAuthorizer

@@ -37,7 +37,7 @@ module.exports.sendEmail = async (event) => {
         Source: process.env.SENDER_ADDRESS
     };
 
-    // await ses.sendEmail(sesParams).promise();
+    await ses.sendEmail(sesParams).promise();
 
     return { statusCode: 200, body: `Email sent. Code expires at ${expTime}` }
 }
