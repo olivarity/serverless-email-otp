@@ -1,12 +1,22 @@
 service: serverless-email-otp-api
 frameworkVersion: '3'
 
+custom:
+  secrets: ${file(secrets.json)}
+
 provider:
   name: aws
   runtime: nodejs14.x
+  httpApi:
+    authorizers:
+      lambdaAuthorizer:
+        type: request
+        functionName: validateToken
+        identitySource: $request.header.Authorization
   environment:
     DYNAMODB_TABLE: ${self:service}-userTable-${sls:stage}
     SENDER_ADDRESS: no-reply@scaasic.com
+    JWT_SECRET: ${self:custom.secrets.JWT_SECRET}
   iam:
     role:
       statements:
@@ -30,6 +40,8 @@ functions:
       - httpApi:
           path: /
           method: get
+          authorizer: 
+            name: lambdaAuthorizer
   sendEmail:
     handler: functions/auth.sendEmail
     events:
@@ -42,6 +54,8 @@ functions:
       - httpApi:
           path: /auth/login/challenge
           method: post
+  validateToken:
+    handler: functions/auth.validateToken
 
 resources:
   Resources:
