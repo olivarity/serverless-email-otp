@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './App.css';
+import Protected from './Protected';
 import TextInput from './components/TextInput';
 
 export default function App() {
@@ -39,7 +40,7 @@ export default function App() {
 
   function buildPage() {
     if(auth) {
-      return <p>Super Secret Page</p>
+      return <Protected auth={auth} />
     } 
     else if(email) {
       return (
