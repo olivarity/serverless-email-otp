@@ -45,12 +45,20 @@ package:
     - '!web'
 
 functions:
-  hello:
-    handler: functions/protected.hello
+  getUserStatus:
+    handler: functions/users.getUserStatus
     events:
       - httpApi:
-          path: /protected
+          path: /users
           method: get
+          authorizer: 
+            name: lambdaAuthorizer
+  updateUserStatus:
+    handler: functions/users.updateUserStatus
+    events:
+      - httpApi:
+          path: /users
+          method: post
           authorizer: 
             name: lambdaAuthorizer
   sendEmail:

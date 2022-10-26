@@ -34,8 +34,26 @@ Example Response Body:
 }
 ```
 
-### GET /protected
+### GET /users
 Protected endpoint using a custom lambda authorizer. Requires a valid JWT in the `Authorization` header.
+
+Example Response Body: 
+```
+{
+  "user": "test@example.com",
+  "status": "Listening to Disloyal Order of Water Buffaloes"  
+}
+```
+
+### POST /users
+Protected endpoint using a custom lambda authorizer. Requires a valid JWT in the `Authorization` header.
+
+Example Request Body: 
+```
+{
+  "status": "My new status!"  
+}
+```
 
 ## TODO Features
 - Login UI
