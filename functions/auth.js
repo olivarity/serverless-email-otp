@@ -39,7 +39,7 @@ module.exports.sendEmail = async (event) => {
 
     await ses.sendEmail(sesParams).promise();
 
-    return { statusCode: 200, body: `Email sent. Code expires at ${expTime}` }
+    return { statusCode: 200, body: JSON.stringify({ user: body.email, exp: expTime }) }
 }
 
 module.exports.validateCode = async (event) => {
@@ -62,14 +62,13 @@ module.exports.validateCode = async (event) => {
                 { user: body.email }, 
                 process.env.JWT_SECRET, 
                 { expiresIn: 3600 });
-            return { statusCode: 200, body: JSON.stringify({ token })}
+            return { statusCode: 200, body: JSON.stringify({ user: body.email, success: true, token })}
         }
-
-        return { statusCode: 400, body: "failure, increment retries"}
+        return { statusCode: 400, body: JSON.stringify({ message: "Invalid OTP", retry: true })}
     }
     
     await clearCode(body.email);
-    return { statusCode: 200, body: "no active challenge, redirect to /login"}
+    return { statusCode: 400, body: JSON.stringify({ message: "No challenge found", retry: false })}
 }
 
 const clearCode = async (email) => {

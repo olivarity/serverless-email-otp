@@ -5,14 +5,16 @@ import TextInput from './components/TextInput';
 export default function App() {
   const [ email, updateEmail ] = useState();
   const [ auth, updateAuth ] = useState();
+  const [ errorMessage, updateErrorMessage ] = useState();
 
   async function requestEmail(emailValue) {
-    const res = await fetch('https://om6evmhe19.execute-api.us-east-1.amazonaws.com/auth/login', {
+    await fetch('https://om6evmhe19.execute-api.us-east-1.amazonaws.com/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: emailValue })
     });
     updateEmail(emailValue);
+    updateErrorMessage(null);
   }
 
   async function attemptChallenge(codeValue) {
@@ -22,9 +24,17 @@ export default function App() {
       body: JSON.stringify({ email, code: codeValue })
     });
     const payload = await res.json();
-    console.log(payload);
-
-    updateAuth(payload.token);
+    
+    if(payload.token) {
+      updateAuth(payload.token);
+      updateErrorMessage(null);
+    }
+    else {
+      if(!payload.retry)
+        updateEmail(null);
+        
+      updateErrorMessage(payload.message);
+    }
   }
 
   function buildPage() {
@@ -60,6 +70,7 @@ export default function App() {
   return (
     <div className="App">
       { buildPage() }
+      <p className='error'>{errorMessage}</p>
     </div>
   );
 }

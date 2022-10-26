@@ -20,7 +20,7 @@ export default function TextInput({ label, onSubmit, ...props }) {
                 onChange={handleInputChange}
                 {...props}
             />
-            <input type="submit" />
+            <input type="submit" value="Submit" />
         </form>
     );
 }
