@@ -1,8 +1,14 @@
 service: serverless-email-otp
 frameworkVersion: '3'
 
+plugins:
+  - serverless-s3-sync
+
 custom:
   secrets: ${file(secrets.json)}
+  s3Sync:
+    - bucketName: serverless-email-otp-assets
+      localDir: web/build
 
 provider:
   name: aws
@@ -74,3 +80,33 @@ resources:
           - AttributeName: email
             KeyType: HASH
         TableName: ${self:service}-userTable-${sls:stage}
+    AssetBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: serverless-email-otp-assets
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: error.html
+    S3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: AssetBucket
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+              - s3:GetObject
+              Resource:
+                Fn::Join: [
+                  "", [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "AssetBucket"
+                    },
+                    "/*"
+                  ]
+                ]

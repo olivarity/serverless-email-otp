@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "npm --prefix ./web run build && sls deploy"
   },
   "dependencies": {
     "aws-sdk": "^2.1240.0",
     "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "serverless-s3-sync": "^3.1.0"
   }
 }
