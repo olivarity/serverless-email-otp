@@ -27,7 +27,7 @@ export default function Protected({ auth }) {
     return (
         <div className='protected'>
             <p>{isLoading ? "Loading..." : `My status is: "${status}"`}</p>
-            <TextInput label="Update status" onSubmit={postStatus} />
+            <TextInput key="status" label="Update status" onSubmit={postStatus} />
         </div>
     );
 }
