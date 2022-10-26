@@ -3,6 +3,7 @@ const AWS = require('aws-sdk');
 const { randomInt } = require('node:crypto');
 
 const db = new AWS.DynamoDB.DocumentClient();
+const ses = new AWS.SES();
 
 module.exports.sendEmail = async (event) => {
     const otpTtl = 15; // in minutes
@@ -24,7 +25,18 @@ module.exports.sendEmail = async (event) => {
 
     await db.update(dbParams).promise()
 
-    // TODO: Email Logic
+    const sesParams = {
+        Destination: { ToAddresses: [body.email] },
+        Message: { 
+            Subject: { Data: "Cool OTP Email"},
+            Body: {
+                Text: { Data: `Your code is ${otpCode}`}
+            }
+        },
+        Source: process.env.SENDER_ADDRESS
+    };
+
+    await ses.sendEmail(sesParams).promise();
 
     return { statusCode: 200, body: `Email sent. Code expires at ${expTime}` }
 }
