@@ -1,4 +1,4 @@
-service: serverless-email-otp-api
+service: serverless-email-otp
 frameworkVersion: '3'
 
 custom:
@@ -32,6 +32,10 @@ provider:
           Action: 
             - 'ses:SendEmail'
           Resource: '*'
+
+package:
+  patterns:
+    - '!web'
 
 functions:
   hello:
