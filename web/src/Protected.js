@@ -13,7 +13,7 @@ export default function Protected({ auth }) {
             updateStatus(data.status);
             updateisLoading(false);
         })
-    }, []);
+    }, [auth]);
 
     async function postStatus(statusValue) {
         await fetch('https://om6evmhe19.execute-api.us-east-1.amazonaws.com/users', {
